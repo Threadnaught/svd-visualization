@@ -2,27 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import quaternion
-
-np.random.seed(5)
-
-n=200
-dims=[100,25,50]
-rot_amount = 0.025
+from coords_and_svd import n, coords_world, S, Vh
 
 # Play with these booleans:
-add_basis = True
-constrain_first_axis = True
-constrain_second_axis = True
-scale_basis_by_significance = True
+add_basis = False
+constrain_first_axis = False
+constrain_second_axis = False
+scale_basis_by_significance = False
 
-coords_world = np.transpose([np.random.normal(scale=x,size=n) for x in dims])
-
-# Compute the SVD:
-U, S, Vh = np.linalg.svd(coords_world)
-
-# Pre-align our coordinate system with the computed SVD.
-# This is a little cheaty but since we're going to be rotating them all over the place it doesn't REALLY matter
-coords_world = np.matmul(coords_world, Vh)
+rot_amount = 0.025
 
 # Generate random rotation as per https://stackoverflow.com/a/44031492
 u,v,w = np.random.uniform(0,1,size=3)
