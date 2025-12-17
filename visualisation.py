@@ -8,20 +8,19 @@ np.random.seed(5)
 n=200
 dims=[100,25,50]
 rot_amount = 0.01
+
+# Play with these booleans:
 add_basis = False
 constrain_first_axis = False
 constrain_second_axis = False
 scale_basis_by_significance = False
 
+
+
 coords_world = np.transpose([np.random.normal(scale=x,size=n) for x in dims])
 
 # Compute the SVD:
 U, S, Vh = np.linalg.svd(coords_world)
-print('U:', np.shape(U))
-print('S:', np.shape(S))
-print('Vh:',  np.shape(Vh))
-print('Vh (first):', Vh[0])
-#exit()
 
 # Pre-align our coordinate system with the computed SVD.
 # This is a little cheaty but since we're going to be rotating them all over the place it doesn't REALLY matter
