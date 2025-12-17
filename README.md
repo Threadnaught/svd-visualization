@@ -47,10 +47,12 @@ coords_world = np.matmul(coords_world, Vh)
 
 ESD analysis only considers the values of `S`, as this is a flat 1-dimensional vector. Remember, it's how much we scaled each of our basis vectors by in our visualisation to show the influence of each on the visualisation. Let's take those scaled vectors and lay them flat, horizontal, and staring from the same X coordinate.
 
-![vectors laid flat](./imgs/esd-False.png)
+![vectors laid flat](./imgs/esd-hist-False-large-False.png)
 
 Now let's use that to build a historgram.
 
-![vectors laid flati with histogram](./imgs/esd-True.png)
+![vectors laid flat with histogram](./imgs/esd-hist-True-large-False.png)
 
-Et voila, we can see the worlds most pointless histogram. Because we only have three basis vectors to analyse, we have more buckets than we have values to fill them.
+Et voila, we can see the worlds most pointless histogram. Because we only have three basis vectors to analyse, we have more buckets than we have values to fill them. Let's do something more interesting. Let's take 1000 uncorrelated vectors, each with 1000 dimensions and see how our histogram of singular values look.
+
+![large-dimensional-histogram](./imgs/esd-hist-True-large-True.png)
