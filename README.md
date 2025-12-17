@@ -42,8 +42,8 @@ In reverse order:
 coords_world = np.matmul(coords_world, Vh)
 ```
 
-- `S` contains the singular values (I call them 'significance' above). It's what how long we portrayed our basis vectors to be in the last visualisation. For each of the basis vectors in Vh, it tells us how important they are to describing the variance of the data.
-- Finally, `U` represents, for each of our input points, how much of each of our basis vectors we need to use to recover them. Unlike `Vh` and `S`, this part of the analysis is not aggregated and gives one output per input vector.
+- `S` contains the singular values (I call them 'significance' above). It's how long we portrayed our basis vectors to be in the last visualisation. For each of the basis vectors in Vh, it tells us how important they are to describing the variance of the data.
+- Finally, `U` represents for each of our input points how much of each of our basis vectors we need to use to recover them. Unlike `Vh` and `S`, this part of the analysis is not aggregated and gives one output per input vector.
 
 ESD analysis only considers the values of `S`, as this is a flat 1-dimensional vector. Remember, it's how much we scaled each of our basis vectors by in our visualisation to show the influence of each on the visualisation. Let's take those scaled vectors and lay them flat, horizontal, and staring from the same X coordinate.
 
@@ -55,8 +55,14 @@ Now let's use that to build a historgram.
 
 Et voila, we can see the worlds most pointless histogram. Because we only have three basis vectors to analyse, we have more buckets than we have values to fill them. Let's do something more interesting. Let's take 1000 uncorrelated vectors, each with 1000 dimensions and see how our histogram of singular values look. Lets say that each of the values in this collection of vectors are normally distributed with mean 0 and variance 1.
 
-![large-dimensional-histogram](./imgs/esd-hist-True-large-True.png)
+![large-dimensional-histogram](./imgs/esd-hist-True-large-True-dist-norm.png)
 
 And here is the magic of the ESD; we can take a vector space far too large to be reasoned about visually, but still make meaningful conclusions about the structure of the underlying space. There is clearly a pattern here, and we can treat it as a statistical distribution and use all of the tools of statistics to analyse what's going on.
 
 ESD analysis is usually introduced towards the beginning of a course on Random Matrix Theory (RMT), surrounded by derrivations and notation. While those are vital, there also is a real risk of leaving such a course without any intuitive sense of what's actually going on inside of these operations and spaces. In particular, RMT has led to recent breakthroughs in describing the internal structure of a neural network with tools like [WeightWatcher](https://github.com/CalculatedContent/WeightWatcher). Neural networks are composed mostly of fancy matrix multiplications after all, and ESD analysis has shown an unreasonable level of generality in understanding how they work. It can do this without looking at training data or even knowing their intended purpose. Incidentally, my cookies have not recovered since discovering WeightWatcher.
+
+I have a confession to make; I have shown you the most boring type of ESD that exists. We've used a mathematical tool designed to measure correlation and structure to look at a matrix without any of either. The ESD distribution that we saw above in the uncorrelated and normally distributed case is called the Marchenko–Pastur (MP) law. If we take another distribution, like standard Student's with degrees of freedom < 2, we get something a lot prettier;
+
+![large-dimensional-histogram](./imgs/esd-hist-True-large-True-dist-heavy.png)
+
+The variance of the values in this case is infinite and the ESD follows a Power Law, which can be seen from all of those singular values hanging out on their own at the very high end. Generally, in neural networks, the specific type and shape of the power law can tell you alot about if your network is over or under fitting.

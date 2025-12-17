@@ -4,11 +4,15 @@ from coords_and_svd import n, coords_world, S, Vh
 
 plot_hist = True
 large_dim_dataset = True
+dist = 'heavy'
 
 if large_dim_dataset:
-    coords_world = np.random.normal(size=[1000, 1000])
+    if dist == 'norm':
+        coords_world = np.random.normal(size=[1000, 1000])
+    elif dist == 'heavy':
+        coords_world = np.random.standard_t(1.8, (1000, 1000))
+
     U, S, Vh = np.linalg.svd(coords_world)
-    print(S.shape)
 
 if not large_dim_dataset:
     plt.plot([0,S[0]], [0.4,0.4], 'r')
@@ -23,11 +27,11 @@ ax.spines['right'].set_visible(False)
 plt.xlabel('Singular value')
 
 if plot_hist:
-    plt.hist(S, bins=20, color='black')
+    plt.hist(S, bins=50, color='black')
     plt.ylabel('Count')
 else:    
     ax.spines['left'].set_visible(False)
     plt.yticks([])
 
-plt.savefig('imgs/esd-hist-%r-large-%r.png' % (plot_hist, large_dim_dataset))
+plt.savefig('imgs/esd-hist-%r-large-%r-dist-%s.png' % (plot_hist, large_dim_dataset, dist))
 plt.show()
