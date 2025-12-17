@@ -27,7 +27,7 @@ Although SVD is not typically computed basis-by-basis, this mental model scales 
 
 ## Empirical Spectral Distribution
 
-How can we generalise this kind of analysis to higher than three spatial dimensions? The vector spaces become hard to visualise in 3D space, but remains meaningful. Let's focus on one type of analysis which can be perfomed, taking the Empirical Spectral Distribution (ESD Let's focus on one type of analysis which can be perfomed, taking the Empirical Spectral Distribution (ESD). 
+How can we generalise this kind of analysis to higher than three spatial dimensions? The vector spaces become hard to visualise in 3D space, but remains meaningful. Let's focus on one type of analysis which can be perfomed, taking the Empirical Spectral Distribution (ESD). 
 
 When we use numpy to compute the SVD in `coords_and_svd.py`, we get three cryptically named outputs;
 
@@ -53,6 +53,9 @@ Now let's use that to build a historgram.
 
 ![vectors laid flat with histogram](./imgs/esd-hist-True-large-False.png)
 
-Et voila, we can see the worlds most pointless histogram. Because we only have three basis vectors to analyse, we have more buckets than we have values to fill them. Let's do something more interesting. Let's take 1000 uncorrelated vectors, each with 1000 dimensions and see how our histogram of singular values look.
+Et voila, we can see the worlds most pointless histogram. Because we only have three basis vectors to analyse, we have more buckets than we have values to fill them. Let's do something more interesting. Let's take 1000 uncorrelated vectors, each with 1000 dimensions and see how our histogram of singular values look. Lets say that each of the values in this collection of vectors are normally distributed with mean 0 and variance 1.
 
 ![large-dimensional-histogram](./imgs/esd-hist-True-large-True.png)
+
+And here is the magic of the ESD; we can take a vector space far too large to be reasoned about visually, but still make meaningful conclusions about the structure of the underlying space. There is clearly a statistical pattern here, and we can treat it as a statistical distribution and use all of the tools of statistics to analyse what's going on.
+
