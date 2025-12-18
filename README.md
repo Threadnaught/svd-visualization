@@ -39,7 +39,7 @@ Something to notice in this visualisation is that the basis vectors are not the 
 
 > In this section, we will be working in `./empirical_spectral_distribution.py` and `./coords_and_svd.py`.
 
-How can we generalise this kind of analysis to higher than three spatial dimensions? The vector spaces become hard to visualise past 3 dimensions, but SVD remains useful. Let's focus on one type of analysis which can be performed, taking the Empirical Spectral Distribution (ESD). 
+These vector spaces become hard to visualise past 3 dimensions, but SVD remains useful. Let's focus on one type of analysis which can be performed, taking the Empirical Spectral Distribution (ESD).
 
 When we use numpy to compute the SVD in `coords_and_svd.py`, we get three cryptically named outputs;
 
@@ -48,16 +48,16 @@ U, S, Vh = np.linalg.svd(coords_world)
 ```
 
 In reverse order:
- - `Vh` is a rotation matrix which we can use to align whatever input space we used to the space in which the zeroth dimension describes the highest variance, the first describes the next highest variance, et cetera. We can generate a set of vectors, apply any rotation we want, and SVD is generally guaranteed to converge the same output space. This is applied in the next line;
+ - `Vh` is the rotation matrix which maps whatever input space we used to the set of basis vectors we constructed above, where they are ranked from most to least variance. For the same set of input vectors, we can apply any rotation we want, and SVD is generally guaranteed to converge the same output space. This is applied in the next line;
 
 ```
 coords_world = np.matmul(coords_world, Vh)
 ```
 
-- `S` contains the singular values (I call them 'significance' above). It's how long we portrayed our basis vectors to be in the last visualisation. For each of the basis vectors in Vh, it tells us how important they are to describing the variance of the data.
-- Finally, `U` represents for each of our input points how much of each of our basis vectors we need to use to construct them. Unlike `Vh` and `S`, this part of the analysis is not aggregated and gives one output per input vector.
+- `S` contains the singular values (I call them 'significance' above). It's how long we portrayed our basis vectors to be in the last visualisation. For each of the basis vectors in `Vh`, it tells us how important they are to describing the variance of the data.
+- Finally, `U` represents, for each of our input points, what combination of our basis vectors reconstruct them. Unlike `Vh` and `S`, this part of the analysis is not aggregated and gives one output per input vector.
 
-ESD analysis only considers the values of `S`, as this is a flat 1-dimensional vector. Remember, in the visualisation it was how much we scaled each of our basis vectors to show the influence of each. Let's take those scaled vectors and lay them flat, horizontal, and starting from the same X coordinate.
+ESD analysis only considers the values of `S`, which this is a flat 1-dimensional vector associating significance levels to each of the basis vectors. Let's take those scaled vectors and lay them flat, horizontal, and starting from the same X coordinate.
 
 ![vectors laid flat](./imgs/esd-hist-False-large-False.png)
 
@@ -65,23 +65,23 @@ Now let's use that to build a histogram.
 
 ![vectors laid flat with histogram](./imgs/esd-hist-True-large-False.png)
 
-Et voila, we can see the worlds most pointless histogram. Because we only have three basis vectors to analyse, we have more buckets than we have values to fill them. Let's do something more interesting. Let's take 1000 uncorrelated vectors, each with 1000 dimensions and see how our histogram of singular values look. Lets say that each of the values in this collection of vectors are normally distributed with mean 0 and variance 1.
+Et voila, we can see the worlds most pointless histogram. Because we only have three basis vectors to analyse, we have more buckets than we have values to fill them. Let's do something more interesting which shows the power of ESD to analyse very large vector spaces. Instead of working in a 3D space, let's instead work in a 1000D space, and then take 1000 vectors to analyse. The values in each row and column of this matrix are all sampled from the same normal distribution with mean 0 and standard deviation 1. This means that they are statistically identical. They are also uncorrelated, meaning they are independent. This is a special type of matrix known as an IID matrix (independent and identically distributed).
 
 ![large-dimensional-histogram](./imgs/esd-hist-True-large-True-dist-norm.png)
 
 And here is the magic of the ESD; we can take a vector space far too large to be reasoned about visually, but still make meaningful conclusions about the structure of the underlying space. There is clearly a pattern here, and we can treat it as a distribution and use all of the tools of statistics to analyse what's going on.
 
-ESD analysis is usually introduced towards the beginning of a course on Random Matrix Theory (RMT), surrounded by derivations and notation. While those are vital, there also is a real risk of leaving such a course without any intuitive sense of what's actually going on inside of these operations and spaces. In particular, RMT has led to recent breakthroughs in describing the internal structure of a neural network with tools like [WeightWatcher](https://github.com/CalculatedContent/WeightWatcher). Neural networks are composed mostly of fancy matrix multiplications after all, and ESD analysis has shown an unreasonable level of generality in understanding how they work. It can do this without looking at training data or even knowing their intended purpose. Incidentally, my cookies have not recovered since discovering WeightWatcher.
+ESD analysis is usually introduced towards the beginning of a course on Random Matrix Theory (RMT), surrounded by derivations and notation. While those are vital, there also is a real risk of leaving such a course without any intuitive sense of what's actually going on inside of these operations and spaces. In particular, RMT has led to theories describing the internal structure of a neural network with tools like [WeightWatcher](https://github.com/CalculatedContent/WeightWatcher). Neural networks are composed mostly of fancy matrix multiplications after all, and ESD analysis has shown an unreasonable level of generality in understanding how they work. It can do this without looking at training data or even knowing their intended purpose. Incidentally, my cookies have not recovered since discovering WeightWatcher.
 
 I have a confession to make; I have shown you the most boring type of ESD that exists. We've used a mathematical tool designed to measure correlation and structure to look at a matrix without any of either. The ESD distribution that we saw above in the uncorrelated and normally distributed case is called the Marchenko–Pastur (MP) law. Let's multiply a series of these matrices together and see what happens.
 
 ![heavy-tailed-histogram](./imgs/esd-hist-True-large-True-dist-heavy.png)
 
-This is the mythical Heavy-Tailed matrix. The distribution of singular values here follow a power law, which can be seen from all of those singular values hanging out on their own at the very high end. When a neural network is training well, your singular values tend to look a little like this. The specific type and shape of the power law can tell you a lot about how the layers of your networks are training. It's a bit smushed, though, let's view it with a log y-axis;
+This is the mythical Heavy-Tailed matrix. In layman's terms, the fluctuations in structure in each individual matrix has been amplified through the repeated multiplications and so we have a few very strong singular vectors, and many weak ones. The distribution of singular values here follow a power law, which can be seen from all of those singular values hanging out on their own at the very high end. When a neural network is training well, your singular values tend to look a little like this. The specific type and shape of the power law can tell you a lot about how the layers of your networks are training. It's a bit smushed, though, let's view it with a log y-axis;
 
 ![heavy-tailed-histogram-log](./imgs/esd-hist-True-large-True-dist-heavy-log.png)
 
-As we can see, it's not a perfect match for a log scale, which should be a straight line, but it's not far off especially in the middle bit.
+As we can see it's not a perfect match for a log scale which should be a straight line, but it's not far off especially in the middle bit.
 
 ### Further Reading:
 
