@@ -76,7 +76,7 @@ def update(frame):
 
     for i in range(3):
         if show_basis[i]:
-            basis_plots[i].set_data([0, basis_vecs_viewport[i,0]], [0, basis_vecs_viewport[i,1]])
+            basis_plots[i].set_data([-basis_vecs_viewport[i,0], basis_vecs_viewport[i,0]], [-basis_vecs_viewport[i,1], basis_vecs_viewport[i,1]])
             updates.append(basis_plots[i])
     
     if show_first_basis_possiblities:
@@ -90,7 +90,7 @@ def update(frame):
 
 ani = animation.FuncAnimation(fig, func=update, interval=50, frames=animation_frames, cache_frame_data=False)
 
-writer = animation.PillowWriter(fps=20, metadata=dict(artist='https://github.com/Threadnaught'), bitrate=1800)
-ani.save('gifs/second-basis-applied.gif', writer=writer)
+#writer = animation.PillowWriter(fps=20, metadata=dict(artist='https://github.com/Threadnaught'), bitrate=1800)
+#ani.save('gifs/second-basis-applied.gif', writer=writer)
 
 plt.show()
