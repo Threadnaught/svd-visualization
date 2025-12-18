@@ -31,7 +31,7 @@ Because we have a 3D input space, and a 3D output space, knowing the closest poi
 
 You can also now see how SVD computes a rotation, essentially constructing a complete coordinate system for our data. 
 
-Something to notice in this visualisation is that the basis vectors are not the same length. This is not true of the output of the raw SVD algorithm, which produces unit basis vectors, but here they are scaled by a set of another set of outputs of the SVD algorithm, the `S` values. These are technically known as the singular values, but I like to call them significance in my head. You can see that the zeroth is the highest significance, the first the next highest, and the final the least. If we had 100-Dimensional data, it would produce 100 perpendicular basis vectors with 100 significance levels, starting with the most and ending with the least significant.
+I have given myself some artistic license in this visualisation; the basis vectors are of different lengths. The basis vectors produced by SVD are always unit (1) length because SVD creates a rotation matrix without any scaling. To produce this visualisation, I have scaled each basis by a set of another set of outputs of the SVD algorithm, the `S` values. These are technically known as the singular values, but you can think of them as 'significance'. You can see that the zeroth is the highest significance, the first the next highest, and the final the least. If we had 100-Dimensional data, it would produce 100 perpendicular basis vectors with 100 significance levels, starting with the most and ending with the least significant.
 
 > SVD is typically computed all at once rather than basis by basis, but this model is very useful in thinking about what exactly SVD is doing.
 
@@ -39,23 +39,23 @@ Something to notice in this visualisation is that the basis vectors are not the 
 
 > In this section, we will be working in `./empirical_spectral_distribution.py` and `./coords_and_svd.py`.
 
-These vector spaces become hard to visualise past 3 dimensions, but SVD remains useful. Let's focus on one type of analysis which can be performed, taking the Empirical Spectral Distribution (ESD).
+Vector spaces become very hard to visualise past 3 dimensions, but SVD remains useful. Let's focus on one type of analysis which can be performed, taking the Empirical Spectral Distribution (ESD).
 
-When we use numpy to compute the SVD in `coords_and_svd.py`, we get three cryptically named outputs;
+When we use numpy to compute the SVD in `./coords_and_svd.py`, we get three cryptically named outputs;
 
 ```
 U, S, Vh = np.linalg.svd(coords_world)
 ```
 
 In reverse order:
- - `Vh` is the rotation matrix which maps whatever input space we used to the set of basis vectors we constructed above, where they are ranked from most to least variance. For the same set of input vectors, we can apply any rotation we want, and SVD is generally guaranteed to converge the same output space. This is applied in the next line;
+ - `Vh` is the rotation matrix which maps whatever input space we used to the set of basis vectors we constructed above, where they are ranked from most to least variance. For the same set of input vectors, we can apply any rotation we want, and SVD is generally guaranteed to converge the same output space. This is rotation matrix is then applied in the next line;
 
 ```
 coords_world = np.matmul(coords_world, Vh)
 ```
 
 - `S` contains the singular values (I call them 'significance' above). It's how long we portrayed our basis vectors to be in the last visualisation. For each of the basis vectors in `Vh`, it tells us how important they are to describing the variance of the data.
-- Finally, `U` represents, for each of our input points, what combination of our basis vectors reconstruct them. Unlike `Vh` and `S`, this part of the analysis is not aggregated and gives one output per input vector.
+- Finally, `U` represents, for each of our input data points, what combination of our constructed basis vectors can reconstruct them. Unlike `Vh` and `S`, this part of the analysis is not aggregated and gives one output per input vector.
 
 ESD analysis only considers the values of `S`, which this is a flat 1-dimensional vector associating significance levels to each of the basis vectors. Let's take those scaled vectors and lay them flat, horizontal, and starting from the same X coordinate.
 
@@ -65,15 +65,15 @@ Now let's use that to build a histogram.
 
 ![vectors laid flat with histogram](./imgs/esd-hist-True-large-False.png)
 
-Et voila, we can see the worlds most pointless histogram. Because we only have three basis vectors to analyse, we have more buckets than we have values to fill them. Let's do something more interesting which shows the power of ESD to analyse very large vector spaces. Instead of working in a 3D space, let's instead work in a 1000D space, and then take 1000 vectors to analyse. The values in each row and column of this matrix are all sampled from the same normal distribution with mean 0 and standard deviation 1. This means that they are statistically identical. They are also uncorrelated, meaning they are independent. This is a special type of matrix known as an IID matrix (independent and identically distributed).
+Et voila, we can see the worlds most pointless histogram. Because we only have three basis vectors to analyse, we have more buckets than we have values to fill them. Let's do something more interesting which shows the power of ESD to analyse very large vector spaces. Instead of working in a 3D space, let's instead work in a 1000D space, and then take 1000 vectors to analyse. The values in each row and column of this input matrix are all sampled from the same normal distribution. This means that they are statistically identical. They are also uncorrelated, meaning they are independent. This is a special type of matrix known as an independent and identically distributed (IID) matrix. When we look at distribution of the SVD singular values, we see;
 
 ![large-dimensional-histogram](./imgs/esd-hist-True-large-True-dist-norm.png)
 
-And here is the magic of the ESD; we can take a vector space far too large to be reasoned about visually, but still make meaningful conclusions about the structure of the underlying space. There is clearly a pattern here, and we can treat it as a distribution and use all of the tools of statistics to analyse what's going on.
+And here is the magic of the ESD; we can take a vector space far too large to be reasoned about visually, but still make meaningful conclusions about the structure of the underlying space. There is clearly a pattern here, and we can treat the singular values as a distribution and use all of the tools of statistics to analyse what's going on.
 
 ESD analysis is usually introduced towards the beginning of a course on Random Matrix Theory (RMT), surrounded by derivations and notation. While those are vital, there also is a real risk of leaving such a course without any intuitive sense of what's actually going on inside of these operations and spaces. In particular, RMT has led to theories describing the internal structure of a neural network with tools like [WeightWatcher](https://github.com/CalculatedContent/WeightWatcher). Neural networks are composed mostly of fancy matrix multiplications after all, and ESD analysis has shown an unreasonable level of generality in understanding how they work. It can do this without looking at training data or even knowing their intended purpose. Incidentally, my cookies have not recovered since discovering WeightWatcher.
 
-I have a confession to make; I have shown you the most boring type of ESD that exists. We've used a mathematical tool designed to measure correlation and structure to look at a matrix without any of either. The ESD distribution that we saw above in the uncorrelated and normally distributed case is called the Marchenko–Pastur (MP) law. Let's multiply a series of these matrices together and see what happens.
+I have a confession to make; I have shown you the most boring type of ESD that exists. We've used a mathematical tool designed to measure correlation and structure to look at a matrix without any of either. The ESD distribution that we saw above in the uncorrelated and normally distributed case is called the Marchenko–Pastur (MP) law. Let's multiply a series of these matrices together and see what happens to the histogram of its singular values.
 
 ![heavy-tailed-histogram](./imgs/esd-hist-True-large-True-dist-heavy.png)
 
