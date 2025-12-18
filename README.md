@@ -27,11 +27,13 @@ Where do we go from here? Well, we are lucky enough to be living in a 3D space. 
 
 ![The second basis vector has been applied](./gifs/second-basis-applied.gif)
 
-Because we have a 3D input space, and a 3D output space, knowing the closest point on any of these three basis vectors tells us where the data is in 3D space. SVD is sometimes used for a type of lossy compression known as dimensional reduction. If you were to flatten all the points so that you only knew their position relative to the zeroth and first basis vector, you could still have a pretty good guess of where the point is in 3D space while only having to communicate two dimensions. 
+Because we have a 3D input space, and a 3D output space, knowing the closest point on all of these three basis vectors tells us where the data is in 3D space. SVD is sometimes used for a type of lossy compression known as dimensional reduction. If you were to flatten all the points so that you only knew their position relative to the zeroth and first basis vector, you could still have a pretty good guess of where the point is in 3D space while only having to communicate two values. 
 
 You can also now see how SVD computes a rotation, essentially constructing a complete coordinate system for our data. 
 
-Something to notice in this visualisation is that the basis vectors are not the same length. This is not true of the output of the raw SVD algorithm, which produces unit basis vectors, but here they are scaled by a set of another set of outputs of the SVD algorithm, the `S` values. These are technically known as the singular values, but I like to call them significance in my head. You can see that the zeroth is the highest significance, the first the next highest, and the final the least. I'll note here that SVD is typically computed all at once rather than basis by basis, but this model is very useful in thinking about what exactly SVD is doing. If we had 100-Dimensional data, it would produce 100 perpendicular basis vectors with 100 significance levels.
+Something to notice in this visualisation is that the basis vectors are not the same length. This is not true of the output of the raw SVD algorithm, which produces unit basis vectors, but here they are scaled by a set of another set of outputs of the SVD algorithm, the `S` values. These are technically known as the singular values, but I like to call them significance in my head. You can see that the zeroth is the highest significance, the first the next highest, and the final the least. If we had 100-Dimensional data, it would produce 100 perpendicular basis vectors with 100 significance levels, starting with the most end ending with the least significant.
+
+> SVD is typically computed all at once rather than basis by basis, but this model is very useful in thinking about what exactly SVD is doing.
 
 ## Empirical Spectral Distribution
 
