@@ -1,5 +1,5 @@
 # Singular Value Decomposition and the Empirical Spectral Distribution
-## Singular Value Decomposition vizualisation
+## Singular Value Decomposition visualisation
 
 `./svd_visualization.py` is a tool to help wrap your head around what exactly the SVD does by explaining it as rotation, in this case in 3D space;
 
@@ -15,7 +15,7 @@
 
 ![Stage three](./gifs/s3.gif)
 
- - When the third boolean flag (`constrain_second_axis`) is flipped to true, we see that all rotation has been removed. We have set the second basis vector to the one perpundicular to the first basis vector which describes the highest remaining variance.
+ - When the third boolean flag (`constrain_second_axis`) is flipped to true, we see that all rotation has been removed. We have set the second basis vector to the one perpendicular to the first basis vector which describes the highest remaining variance.
 
 ![Stage four](./gifs/s4.gif)
 
@@ -28,7 +28,7 @@ Although SVD is not typically computed basis-by-basis, this mental model scales 
 
 ## Empirical Spectral Distribution
 
-How can we generalise this kind of analysis to higher than three spatial dimensions? The vector spaces become hard to visualise past 3 dimensions, but SVD remains useful. Let's focus on one type of analysis which can be perfomed, taking the Empirical Spectral Distribution (ESD). 
+How can we generalise this kind of analysis to higher than three spatial dimensions? The vector spaces become hard to visualise past 3 dimensions, but SVD remains useful. Let's focus on one type of analysis which can be performed, taking the Empirical Spectral Distribution (ESD). 
 
 When we use numpy to compute the SVD in `coords_and_svd.py`, we get three cryptically named outputs;
 
@@ -50,7 +50,7 @@ ESD analysis only considers the values of `S`, as this is a flat 1-dimensional v
 
 ![vectors laid flat](./imgs/esd-hist-False-large-False.png)
 
-Now let's use that to build a historgram.
+Now let's use that to build a histogram.
 
 ![vectors laid flat with histogram](./imgs/esd-hist-True-large-False.png)
 
@@ -60,7 +60,7 @@ Et voila, we can see the worlds most pointless histogram. Because we only have t
 
 And here is the magic of the ESD; we can take a vector space far too large to be reasoned about visually, but still make meaningful conclusions about the structure of the underlying space. There is clearly a pattern here, and we can treat it as a distribution and use all of the tools of statistics to analyse what's going on.
 
-ESD analysis is usually introduced towards the beginning of a course on Random Matrix Theory (RMT), surrounded by derrivations and notation. While those are vital, there also is a real risk of leaving such a course without any intuitive sense of what's actually going on inside of these operations and spaces. In particular, RMT has led to recent breakthroughs in describing the internal structure of a neural network with tools like [WeightWatcher](https://github.com/CalculatedContent/WeightWatcher). Neural networks are composed mostly of fancy matrix multiplications after all, and ESD analysis has shown an unreasonable level of generality in understanding how they work. It can do this without looking at training data or even knowing their intended purpose. Incidentally, my cookies have not recovered since discovering WeightWatcher.
+ESD analysis is usually introduced towards the beginning of a course on Random Matrix Theory (RMT), surrounded by derivations and notation. While those are vital, there also is a real risk of leaving such a course without any intuitive sense of what's actually going on inside of these operations and spaces. In particular, RMT has led to recent breakthroughs in describing the internal structure of a neural network with tools like [WeightWatcher](https://github.com/CalculatedContent/WeightWatcher). Neural networks are composed mostly of fancy matrix multiplications after all, and ESD analysis has shown an unreasonable level of generality in understanding how they work. It can do this without looking at training data or even knowing their intended purpose. Incidentally, my cookies have not recovered since discovering WeightWatcher.
 
 I have a confession to make; I have shown you the most boring type of ESD that exists. We've used a mathematical tool designed to measure correlation and structure to look at a matrix without any of either. The ESD distribution that we saw above in the uncorrelated and normally distributed case is called the Marchenko–Pastur (MP) law. If we take another distribution, like standard Student's T distribution with degrees of freedom < 2, we get something a lot prettier;
 
