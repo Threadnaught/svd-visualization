@@ -58,15 +58,15 @@ Et voila, we can see the worlds most pointless histogram. Because we only have t
 
 ![large-dimensional-histogram](./imgs/esd-hist-True-large-True-dist-norm.png)
 
-And here is the magic of the ESD; we can take a vector space far too large to be reasoned about visually, but still make meaningful conclusions about the structure of the underlying space. There is clearly a pattern here, and we can treat it as a statistical distribution and use all of the tools of statistics to analyse what's going on.
+And here is the magic of the ESD; we can take a vector space far too large to be reasoned about visually, but still make meaningful conclusions about the structure of the underlying space. There is clearly a pattern here, and we can treat it as a distribution and use all of the tools of statistics to analyse what's going on.
 
 ESD analysis is usually introduced towards the beginning of a course on Random Matrix Theory (RMT), surrounded by derrivations and notation. While those are vital, there also is a real risk of leaving such a course without any intuitive sense of what's actually going on inside of these operations and spaces. In particular, RMT has led to recent breakthroughs in describing the internal structure of a neural network with tools like [WeightWatcher](https://github.com/CalculatedContent/WeightWatcher). Neural networks are composed mostly of fancy matrix multiplications after all, and ESD analysis has shown an unreasonable level of generality in understanding how they work. It can do this without looking at training data or even knowing their intended purpose. Incidentally, my cookies have not recovered since discovering WeightWatcher.
 
-I have a confession to make; I have shown you the most boring type of ESD that exists. We've used a mathematical tool designed to measure correlation and structure to look at a matrix without any of either. The ESD distribution that we saw above in the uncorrelated and normally distributed case is called the Marchenko–Pastur (MP) law. If we take another distribution, like standard Student's with degrees of freedom < 2, we get something a lot prettier;
+I have a confession to make; I have shown you the most boring type of ESD that exists. We've used a mathematical tool designed to measure correlation and structure to look at a matrix without any of either. The ESD distribution that we saw above in the uncorrelated and normally distributed case is called the Marchenko–Pastur (MP) law. If we take another distribution, like standard Student's T distribution with degrees of freedom < 2, we get something a lot prettier;
 
 ![large-dimensional-histogram](./imgs/esd-hist-True-large-True-dist-heavy.png)
 
-The variance of the values in this case is infinite and the ESD follows a Power Law, which can be seen from all of those singular values hanging out on their own at the very high end. Generally, in neural networks, the specific type and shape of the power law can tell you alot about if your network is over or under fitting.
+The variance of the ESD here follows a Power Law, which can be seen from all of those singular values hanging out on their own at the very high end. Generally, in neural networks, the specific type and shape of the power law can tell you a lot about how the layers of your networks are training.
 
 ### Further Reading:
 
