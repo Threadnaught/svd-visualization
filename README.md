@@ -73,11 +73,11 @@ And here is the magic of the ESD; we can take a vector space far too large to be
 
 ESD analysis is usually introduced towards the beginning of a course on Random Matrix Theory (RMT), surrounded by derivations and notation. While those are vital, there also is a real risk of leaving such a course without any intuitive sense of what's actually going on inside of these operations and spaces. In particular, RMT has led to recent breakthroughs in describing the internal structure of a neural network with tools like [WeightWatcher](https://github.com/CalculatedContent/WeightWatcher). Neural networks are composed mostly of fancy matrix multiplications after all, and ESD analysis has shown an unreasonable level of generality in understanding how they work. It can do this without looking at training data or even knowing their intended purpose. Incidentally, my cookies have not recovered since discovering WeightWatcher.
 
-I have a confession to make; I have shown you the most boring type of ESD that exists. We've used a mathematical tool designed to measure correlation and structure to look at a matrix without any of either. The ESD distribution that we saw above in the uncorrelated and normally distributed case is called the Marchenko–Pastur (MP) law. If we take another distribution, like standard Student's T distribution with degrees of freedom < 2, we get something a lot prettier;
+I have a confession to make; I have shown you the most boring type of ESD that exists. We've used a mathematical tool designed to measure correlation and structure to look at a matrix without any of either. The ESD distribution that we saw above in the uncorrelated and normally distributed case is called the Marchenko–Pastur (MP) law. Let's multiply a series of these matrices together and see what happens.
 
 ![large-dimensional-histogram](./imgs/esd-hist-True-large-True-dist-heavy.png)
 
-The variance of the ESD here follows a Power Law, which can be seen from all of those singular values hanging out on their own at the very high end. Generally, in neural networks, the specific type and shape of the power law can tell you a lot about how the layers of your networks are training.
+This is the mythical Heavy-Tailed matrix. The distribution of singular values here follow a power law, which can be seen from all of those singular values hanging out on their own at the very high end. When a neural network is training well, your singular values tend to look a little like this. The specific type and shape of the power law can tell you a lot about how the layers of your networks are training.
 
 ### Further Reading:
 
