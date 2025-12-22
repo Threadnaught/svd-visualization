@@ -100,14 +100,16 @@ x_min = 10
 alpha = 2.5
 ```
 
-What does this look like in practise? Let's plot this fit line against the ground truth that we were drew our singular values from.
+That's not far off, but how close does this look in practise? Let's plot this fit line against the ground truth that we were drew our singular values from.
 
 ![heavy tailed histogram log and fitted power law](./imgs/esd-heavy-hist-log-pl.png)
 
-That's not far off. Obviously, 'not far off' is not a statistically valid concept and we would need to test a lot of different `x_min`s and `alpha`s to build more confidence than this simple gut check. From this example, however, we can see one of the things that makes power laws hard to fit;
+Obviously, 'not far off' is not a statistically valid concept and we would need to test a lot of different `x_mins` and `alphas` to build more confidence than this simple gut check. From this example, however, we can see one of the things that makes power laws hard to fit;
 
  - At low values, there is a lot of data and the curve matches closely
  - At high values, the distribution thins out a lot, leading to larger and larger divergence between the fit curve and ground truth as we move towards the right of the graph.
+
+This explains why `x_min` has been fitted much better than `alpha`.
 
 ### Further Reading:
 
