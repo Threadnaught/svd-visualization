@@ -79,13 +79,13 @@ I have a confession to make; I have shown you the most boring type of ESD that e
 
 ![heavy-tailed-histogram](./imgs/esd-heavy-hist.png)
 
-This is the mythical Power Law Heavy-Tailed matrix. Unfortunately, a lot of the detail has been blown out by the massive spike of low singular values. Let's fix that with a log scale; 
+This is the mythical power law Heavy-Tailed matrix. Unfortunately, a lot of the detail has been blown out by the massive spike of low singular values. Let's fix that with a log scale; 
 
 ![heavy-tailed-histogram-log](./imgs/esd-heavy-hist-log.png)
 
 The distribution of singular values here follow a power law, which can be seen from all of those singular values hanging out on their own at the very high end. When a neural network is training well, your singular values tend to look a little like this. The specific type and shape of the power law can tell you a lot about how the layers of your networks are training.
 
-A confession; Powerlaw Heavy-Tailed matrices are confusing. This project (beautifully) taught me that I didn't understand them as well as I thought I did. Embarrassingly, the above section previously displayed a lognormal-ish matrix which failed to fit a Powerlaw at all. At one point, I even relented at one point and constructed one with gradient descent, which is machine learning speak for 'I don't know how to make this analytically'. The approach I used in the end was actually very simple (albeit heavily commented), if you want to see it take a look at the block that starts `elif dist == 'heavy':` in `./empirical_spectral_distribution.py`
+> A confession; power law Heavy-Tailed matrices are confusing. This project (beautifully) taught me that I didn't understand them as well as I thought I did. The above section previously displayed a lognormal-ish matrix which failed to fit a power law at all. At one point, I even relented and constructed one which did fit with gradient descent, which is machine learning speak for 'I don't know how to make this analytically'. The approach I used in the end was actually very simple (albeit heavily commented), if you want to see it take a look at the block that starts `elif dist == 'heavy':` in `./empirical_spectral_distribution.py`.
 
 ### Further Reading:
 
