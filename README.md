@@ -57,31 +57,35 @@ coords_world = np.matmul(coords_world, Vh)
 - `S` contains the singular values (I call them 'significance' above). It's how long we portrayed our basis vectors to be in the last visualisation. For each of the basis vectors in `Vh`, it tells us how important they are to describing the variance of the data.
 - Finally, `U` represents, for each of our input data points, what combination of our constructed basis vectors can reconstruct them. Unlike `Vh` and `S`, this part of the analysis is not aggregated and gives one output per input vector.
 
-ESD analysis only considers the values of `S`, which this is a flat 1-dimensional vector associating significance levels to each of the basis vectors. Let's take those scaled vectors and lay them flat, horizontal, and starting from the same X coordinate.
+ESD analysis only considers the values of `S`, which is a flat 1-dimensional vector associating significance levels to each of the basis vectors. Let's take those scaled vectors and lay them flat, horizontal, and starting from the same X coordinate.
 
-![vectors laid flat](./imgs/esd-hist-False-large-False.png)
+![vectors laid flat](./imgs/esd-3d.png)
 
 Now let's use that to build a histogram.
 
-![vectors laid flat with histogram](./imgs/esd-hist-True-large-False.png)
+![vectors laid flat with histogram](./imgs/esd-3d-hist.png)
 
-Et voila, we can see the worlds most pointless histogram. Because we only have three basis vectors to analyse, we have more buckets than we have values to fill them. Let's do something more interesting which shows the power of ESD to analyse very large vector spaces. Instead of working in a 3D space, let's instead work in a 1000D space, and then take 1000 vectors to analyse. The values in each row and column of this input matrix are all sampled from the same normal distribution. This means that they are statistically identical. They are also uncorrelated, meaning they are independent. This is a special type of matrix known as an independent and identically distributed (IID) matrix. When we look at distribution of the SVD singular values, we see;
+Et voila, we can see the worlds most pointless histogram. Because we only have three basis vectors to analyse, we have more buckets than we have values to fill them. Something to note here - it's a **density** histogram, where the area of each bucket corresponds to the number of items in the bucket rather than their height - this is the convention when creating an ESD histogram. 
 
-![large-dimensional-histogram](./imgs/esd-hist-True-large-True-dist-norm.png)
+Let's do something more interesting which shows the power of ESD to analyse very large vector spaces. Instead of working in a 3D space, let's instead work in a 1000D space, and then take 1000 vectors to analyse. The values in each row and column of this input matrix are all sampled from the same normal distribution. This means that they are statistically identical. They are also uncorrelated, meaning they are independent. This is a special type of matrix known as an independent and identically distributed (IID) matrix. When we look at distribution of the SVD singular values, we see;
+
+![large-dimensional-histogram](./imgs/esd-norm-hist.png)
 
 And here is the magic of the ESD; we can take a vector space far too large to be reasoned about visually, but still make meaningful conclusions about the structure of the underlying space. There is clearly a pattern here, and we can treat the singular values as a distribution and use all of the tools of statistics to analyse what's going on.
 
 ESD analysis is usually introduced towards the beginning of a course on Random Matrix Theory (RMT), surrounded by derivations and notation. While those are vital, there also is a real risk of leaving such a course without any intuitive sense of what's actually going on inside of these operations and spaces. In particular, RMT has led to theories describing the internal structure of a neural network with tools like [WeightWatcher](https://github.com/CalculatedContent/WeightWatcher). Neural networks are composed mostly of fancy matrix multiplications after all, and ESD analysis has shown an unreasonable level of generality in understanding how they work. It can do this without looking at training data or even knowing their intended purpose. Incidentally, my cookies have not recovered since discovering WeightWatcher.
 
-I have a confession to make; I have shown you the most boring type of ESD that exists. We've used a mathematical tool designed to measure correlation and structure to look at a matrix without any of either. The ESD distribution that we saw above in the uncorrelated and normally distributed case is called the Marchenko–Pastur (MP) law. Let's multiply a series of these matrices together and see what happens to the histogram of its singular values.
+I have a confession to make; I have shown you the most boring type of ESD that exists. We've used a mathematical tool designed to measure correlation and structure to look at a matrix without any of either. The ESD distribution that we saw above in the IID normally distributed case follows the Marchenko–Pastur (MP) law. Let's look at a matrix which I prepared earlier.
 
-![heavy-tailed-histogram](./imgs/esd-hist-True-large-True-dist-heavy.png)
+![heavy-tailed-histogram](./imgs/esd-heavy-hist.png)
 
-This is the mythical Heavy-Tailed matrix. In layman's terms, the fluctuations in structure in each individual matrix has been amplified through the repeated multiplications and so we have a few very strong singular vectors, and many weak ones. The distribution of singular values here follow a power law, which can be seen from all of those singular values hanging out on their own at the very high end. When a neural network is training well, your singular values tend to look a little like this. The specific type and shape of the power law can tell you a lot about how the layers of your networks are training. It's a bit smushed, though, let's view it with a log y-axis;
+This is the mythical Power Law Heavy-Tailed matrix. Unfortunately, a lot of the detail has been blown out by the massive spike of low singular values. Let's fix that with a log scale; 
 
-![heavy-tailed-histogram-log](./imgs/esd-hist-True-large-True-dist-heavy-log.png)
+![heavy-tailed-histogram-log](./imgs/esd-heavy-hist-log.png)
 
-As we can see it's not a perfect match for a log scale which should be a straight line, but it's not far off especially in the middle bit.
+The distribution of singular values here follow a power law, which can be seen from all of those singular values hanging out on their own at the very high end. When a neural network is training well, your singular values tend to look a little like this. The specific type and shape of the power law can tell you a lot about how the layers of your networks are training.
+
+A confession; Powerlaw Heavy-Tailed matrices are confusing. This project (beautifully) taught me that I didn't understand them as well as I thought I did. Embarrassingly, the above section previously displayed a lognormal-ish matrix which failed to fit a Powerlaw at all. At one point, I even relented at one point and constructed one with gradient descent, which is machine learning speak for 'I don't know how to make this analytically'. The approach I used in the end was actually very simple (albeit heavily commented), if you want to see it take a look at the block that starts `elif dist == 'heavy':` in `./empirical_spectral_distribution.py`
 
 ### Further Reading:
 
